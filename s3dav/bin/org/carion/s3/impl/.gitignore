@@ -1,0 +1,15 @@
+/Bucket.class
+/Cache$1.class
+/Cache.class
+/CredentialFactory$NoCredential.class
+/CredentialFactory.class
+/Object.class
+/S3FolderImpl.class
+/S3ObjectImpl.class
+/S3RepositoryImpl.class
+/S3ResourceImpl.class
+/S3UploadImpl$UploadTask.class
+/S3UploadImpl.class
+/S3UploadManagerImpl.class
+/S3UrlNameImpl.class
+/UploadResource.class

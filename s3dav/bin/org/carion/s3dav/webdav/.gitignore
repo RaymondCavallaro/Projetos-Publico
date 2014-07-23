@@ -1,0 +1,16 @@
+/HandlerBase.class
+/HandlerCopy.class
+/HandlerDelete.class
+/HandlerForbidden.class
+/HandlerGet.class
+/HandlerHead.class
+/HandlerMkcol.class
+/HandlerMove.class
+/HandlerOptions.class
+/HandlerPost.class
+/HandlerPropfind$PropfindHandler.class
+/HandlerPropfind.class
+/HandlerPut.class
+/HandlerUnsupported.class
+/InternetInputStream.class
+/WebdavServer.class
