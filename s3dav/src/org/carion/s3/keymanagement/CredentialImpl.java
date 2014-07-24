@@ -43,7 +43,7 @@ public class CredentialImpl implements Credential {
 
     private final boolean _accessAllowed;
 
-    private final String _host = "s3.amazonaws.com";
+    private final String _host = "s3-sa-east-1.amazonaws.com";
 
     private String _awsAccessKeyId;
 

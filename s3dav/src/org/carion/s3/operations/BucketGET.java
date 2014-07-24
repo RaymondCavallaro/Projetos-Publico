@@ -56,12 +56,12 @@ public class BucketGET extends BaseS3Operation {
      */
     public List execute(String prefix) throws IOException {
         for (String marker = null;;) {
-            S3Request X = S3Request.mkGetRequest("/" + _bucket + "/", _log);
+            S3Request X = new S3Request(S3Request.S3RequestMethods.GET, "/" + _bucket, _log);
             X.setQueryString("prefix="
                     + prefix
                     + ((marker == null) ? "" : "&marker="
                             + Util.urlEncode(marker)));
-            if (!process(X, "http://" + _bucket + ".", false)) {
+            if (!process(X, false)) {
                 throw new IOException("Can't get list fo files");
             }
             String xmlData = getXmldata();

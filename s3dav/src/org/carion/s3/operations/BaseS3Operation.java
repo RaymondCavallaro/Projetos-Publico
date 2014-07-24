@@ -99,20 +99,6 @@ abstract public class BaseS3Operation implements S3Processing {
         return s3Request.process(_credential, this, doCloseConnection);
     }
 
-    protected boolean process(S3Request s3Request, String url, boolean doCloseConnection) {
-        _request = "Request:" + s3Request.getMethod() + " "
-                + s3Request.getPath() + " " + s3Request.getQueryString();
-        _log.log("Request:" + s3Request.getMethod() + " " + s3Request.getPath()
-                + " " + s3Request.getQueryString());
-        for (Iterator iter = _metaToAddInRequest.keySet().iterator(); iter
-                .hasNext();) {
-            String key = (String) iter.next();
-            String value = (String) _metaToAddInRequest.get(key);
-            s3Request.addMetaInformation(key, value);
-        }
-        return s3Request.process(_credential, this, url + _credential.getHost(), doCloseConnection);
-    }
-
     public String getMeta(String meta) {
         return (String) _meta.get(meta);
     }

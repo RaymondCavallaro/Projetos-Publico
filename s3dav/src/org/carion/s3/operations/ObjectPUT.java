@@ -41,12 +41,10 @@ import org.carion.s3.S3Log;
  * 
  * @author pcarion
  */
-public class ObjectPUT extends BaseS3Operation {
-    private final String _uri;
+public class ObjectPUT extends ObjectS3Operation {
 
     public ObjectPUT(String uri, Credential credential, S3Log log) {
-        super(credential, log);
-        _uri = uri;
+        super(S3Request.S3RequestMethods.PUT, uri, credential, log);
     }
 
     public boolean execute() throws IOException {
@@ -56,7 +54,7 @@ public class ObjectPUT extends BaseS3Operation {
     public boolean execute(InputStream content, String contentType,
             String contentMd5, long contentLength, UploadNotification notify)
             throws IOException {
-        S3Request X = S3Request.mkPutRequest(_uri, _log);
+        S3Request X = new S3Request(_method, _uri, _log);
         if (content != null) {
             if (notify != null) {
                 X.setUploadNotification(notify);

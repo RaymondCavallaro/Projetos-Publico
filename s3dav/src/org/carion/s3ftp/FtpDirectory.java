@@ -40,11 +40,11 @@ public class FtpDirectory {
 
     private final S3Repository _repository;
 
-    private final static SimpleDateFormat _formatterRecent = new SimpleDateFormat(
-            "MMM dd HH:mm", Locale.US);
+//    private final static SimpleDateFormat _formatterRecent = new SimpleDateFormat(
+//            "MMM\tdd\tHH:mm");
 
     private final static SimpleDateFormat _formatterOld = new SimpleDateFormat(
-            "MMM dd yyyy", Locale.US);
+            "dd-MMM-yyyy");
 
     FtpDirectory(S3Repository repository) {
         _repository = repository;
@@ -217,11 +217,11 @@ public class FtpDirectory {
         }
 
         public String getFtpDate(Date sixMonthsAgo) {
-            if (_date.before(sixMonthsAgo)) {
+//            if (_date.before(sixMonthsAgo)) {
                 return _formatterOld.format(_date);
-            } else {
-                return _formatterRecent.format(_date);
-            }
+//            } else {
+//                return _formatterRecent.format(_date);
+//            }
         }
     }
 

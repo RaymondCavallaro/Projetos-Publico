@@ -27,16 +27,9 @@ import org.carion.s3.S3Log;
  *
  * @author pcarion
  */
-public class ObjectDELETE extends BaseS3Operation{
-    private final String _uri;
+public class ObjectDELETE extends ObjectS3Operation{
 
     public ObjectDELETE(String uri, Credential credential, S3Log log) {
-        super(credential, log);
-        _uri = uri;
-    }
-
-    public boolean execute() throws IOException {
-        S3Request X = S3Request.mkDeleteRequest(_uri, _log);
-        return process(X);
+        super(S3Request.S3RequestMethods.DELETE, uri, credential, log);
     }
 }

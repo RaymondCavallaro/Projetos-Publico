@@ -50,20 +50,14 @@ public class S3Request {
 
     private static final String HMAC_SHA1_ALGORITHM = "HmacSHA1";
 
-    public static S3Request mkGetRequest(String path, S3Log log) {
-        return new S3Request("GET", path, log);
-    }
-
-    public static S3Request mkPutRequest(String path, S3Log log) {
-        return new S3Request("PUT", path, log);
-    }
-
-    public static S3Request mkDeleteRequest(String path, S3Log log) {
-        return new S3Request("DELETE", path, log);
-    }
-
-    public static S3Request mkHeadRequest(String path, S3Log log) {
-        return new S3Request("HEAD", path, log);
+    public enum S3RequestMethods {
+    	GET("GET"), PUT("PUT"), DELETE("DELETE"), HEAD("HEAD");
+    	
+    	public final String method;
+    	
+    	private S3RequestMethods(String method) {
+    		this.method = method;
+    	}
     }
 
     private final String _method;
@@ -95,11 +89,11 @@ public class S3Request {
         _httpDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
     }
 
-    private S3Request(String method, String path, S3Log log) {
-        this(method, path, _httpDateFormat.format(new Date()) + "GMT", log);
+    public S3Request(S3RequestMethods method, String path, S3Log log) {
+        this(method.method, path, _httpDateFormat.format(new Date()) + "GMT", log);
     }
 
-    S3Request(String method, String path, String date, S3Log log) {
+    private S3Request(String method, String path, String date, S3Log log) {
         _method = method;
         _path = path;
         _httpDate = date;
@@ -128,12 +122,6 @@ public class S3Request {
 
     public boolean process(Credential credential, S3Processing processing,
             boolean doCloseConnection) {
-    	return process(credential, processing, "http://" + credential.getHost() + _path
-    	        + ((_queryString != null) ? "?" + _queryString : ""), doCloseConnection);
-    }
-
-    public boolean process(Credential credential, S3Processing processing, String sUrl,
-            boolean doCloseConnection) {
         HttpURLConnection conn = null;
         try {
             // on these methods, the java.net classes will add this content type
@@ -152,7 +140,8 @@ public class S3Request {
             String hmacSha1 = hmacSha1(credential.getAwsSecretAccessKey(),
                     canon);
 
-            URL url = new URL(sUrl);
+            URL url = new URL("https://" + credential.getHost() + _path
+        	        + ((_queryString != null) ? "?" + _queryString : ""));
 
             conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod(_method);

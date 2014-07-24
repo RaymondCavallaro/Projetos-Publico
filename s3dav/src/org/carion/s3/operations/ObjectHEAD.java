@@ -31,16 +31,9 @@ import org.carion.s3.S3Log;
  *
  * @author pcarion
  */
-public class ObjectHEAD extends BaseS3Operation {
-    private final String _uri;
+public class ObjectHEAD extends ObjectS3Operation {
 
     public ObjectHEAD(String uri, Credential credential, S3Log log) {
-        super(credential, log);
-        _uri = uri;
-    }
-
-    public boolean execute() throws IOException {
-        S3Request X = S3Request.mkHeadRequest(_uri, _log);
-        return process(X);
+        super(S3Request.S3RequestMethods.HEAD, uri, credential, log);
     }
 }

@@ -20,6 +20,7 @@ import java.net.HttpURLConnection;
 
 import org.carion.s3.Credential;
 import org.carion.s3.S3Log;
+import org.carion.s3.operations.S3Request;
 
 /**
  * You fetch objects from S3 using the GET operation.
@@ -32,9 +33,18 @@ import org.carion.s3.S3Log;
  *
  * @author pcarion
  */
-public class ObjectGET extends ObjectS3Operation {
+public class ObjectS3Operation extends BaseS3Operation {
+    protected final String _uri;
+    protected final S3Request.S3RequestMethods _method;
 
-    public ObjectGET(String uri, Credential credential, S3Log log) {
-        super(S3Request.S3RequestMethods.GET, uri, credential, log);
+    public ObjectS3Operation(S3Request.S3RequestMethods method, String uri, Credential credential, S3Log log) {
+        super(credential, log);
+        _uri = uri;
+        _method = method;
+    }
+
+    public boolean execute() throws IOException {
+        S3Request X = new S3Request(_method, _uri, _log);
+        return process(X, false);
     }
 }
