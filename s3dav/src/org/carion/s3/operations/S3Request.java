@@ -250,6 +250,7 @@ public class S3Request {
                     InputStream in = Util.wrap(conn.getErrorStream(), false,
                             conn.getContentLength());
                     error = Util.readInputStreamAsString(in);
+                    _log.log(error);
                 }
                 S3Error errorResponse;
                 if ("application/xml".equals(contentType)

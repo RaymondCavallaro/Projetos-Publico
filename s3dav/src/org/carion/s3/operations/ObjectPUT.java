@@ -54,6 +54,7 @@ public class ObjectPUT extends ObjectS3Operation {
     public boolean execute(InputStream content, String contentType,
             String contentMd5, long contentLength, UploadNotification notify)
             throws IOException {
+//    	addMeta("x-amz-storage-class", "REDUCED_REDUNDANCY");
         S3Request X = new S3Request(_method, _uri, _log);
         if (content != null) {
             if (notify != null) {
