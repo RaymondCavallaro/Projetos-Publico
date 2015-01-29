@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/application_6.xsd" version="6">
+  <display-name>s3ftp-webui-ear</display-name>
+  <module>
+    <web>
+      <web-uri>s3ftp-webui-0.0.0.1-SNAPSHOT.war</web-uri>
+      <context-root>/s3ftp-webui</context-root>
+    </web>
+  </module>
+  <module>
+    <ejb>s3ftp-webui-ejb.jar</ejb>
+  </module>
+  <module>
+    <web>
+      <web-uri>s3ftp-webui-view.war</web-uri>
+      <context-root>s3ftp-webui-view</context-root>
+    </web>
+  </module>
+  <library-directory>lib</library-directory>
+</application>

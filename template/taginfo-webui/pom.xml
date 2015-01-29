@@ -1,0 +1,36 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>taginfo-webui</artifactId>
+	<packaging>pom</packaging>
+
+	<name>taginfo-webui</name>
+
+	<parent>
+		<groupId>raymond</groupId>
+		<artifactId>taginfo</artifactId>
+		<version>0.0.0.1-SNAPSHOT</version>
+	</parent>
+
+	<dependencies>
+		<dependency>
+			<groupId>raymond</groupId>
+			<artifactId>taginfo-service</artifactId>
+			<version>0.0.0.1-SNAPSHOT</version>
+			<type>jar</type>
+		</dependency>
+		<dependency>
+			<groupId>raymond</groupId>
+			<artifactId>taginfo-model</artifactId>
+			<version>0.0.0.1-SNAPSHOT</version>
+			<type>jar</type>
+		</dependency>
+	</dependencies>
+
+	<modules>
+		<module>taginfo-webui-ear</module>
+		<module>taginfo-webui-service</module>
+		<module>taginfo-webui-view</module>
+	</modules>
+</project>

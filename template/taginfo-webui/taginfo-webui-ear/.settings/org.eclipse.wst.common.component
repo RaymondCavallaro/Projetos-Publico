@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="taginfo-webui-ear-0.0.0.1-SNAPSHOT">
+        <wb-resource deploy-path="/" source-path="/src/main/application" tag="defaultRootSource"/>
+        <dependent-module archiveName="awbhelper-web-0.0.0.1-SNAPSHOT.war" deploy-path="/" handle="module:/resource/awbhelper-web/awbhelper-web">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+    </wb-module>
+</project-modules>

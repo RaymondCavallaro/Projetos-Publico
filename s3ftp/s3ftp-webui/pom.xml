@@ -1,0 +1,30 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>s3ftp-webui</artifactId>
+	<packaging>pom</packaging>
+
+	<name>s3ftp-webui</name>
+
+	<parent>
+		<groupId>raymond</groupId>
+		<artifactId>s3ftp</artifactId>
+		<version>0.0.0.1-SNAPSHOT</version>
+	</parent>
+
+	<dependencies>
+		<dependency>
+			<groupId>raymond</groupId>
+			<artifactId>s3ftp-model</artifactId>
+			<version>0.0.0.1-SNAPSHOT</version>
+			<type>jar</type>
+		</dependency>
+	</dependencies>
+
+	<modules>
+		<module>s3ftp-webui-ear</module>
+		<module>s3ftp-webui-ejb</module>
+		<module>s3ftp-webui-view</module>
+	</modules>
+</project>
