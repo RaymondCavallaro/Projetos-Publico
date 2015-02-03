@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vorlex.mockftpserver;
+package raymond.mockftpserver;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,12 +25,12 @@ import org.mockftpserver.fake.filesystem.UnixFakeFileSystem;
 public class FakeFileSystemWrapped extends UnixFakeFileSystem {
 
 	// private static final Character SEPARATOR_CHAR = '/';
-	//
-	// @Override
-	// protected boolean isValidName(String path) {
-	// return true;
-	// }
-	//
+
+//	@Override
+//	protected boolean isValidName(String path) {
+//		return true;
+//	}
+
 	// @Override
 	// protected char getSeparatorChar() {
 	// return SEPARATOR_CHAR;

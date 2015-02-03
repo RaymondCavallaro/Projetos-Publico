@@ -14,18 +14,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vorlex.mockftpserver;
+package raymond.mockftpserver;
 
+import java.util.List;
+
+import org.mockftpserver.fake.filesystem.DirectoryEntry;
+import org.mockftpserver.fake.filesystem.FileEntry;
 import org.mockftpserver.fake.filesystem.FileSystemEntry;
+
+import com.amazonaws.regions.Region;
 
 public class CachedFileSystem extends FakeFileSystemWrapper {
 
-	protected S3BucketFileSystem s3 = new S3BucketFileSystem();
+	private static final String ROOT_FOLDER = "/";
+
+	protected S3BucketFileSystem s3;
 
 	public CachedFileSystem() {
 		super();
-		for (FileSystemEntry entry : s3.listFilesRoot()) {
-			super.add(entry);
+	}
+
+	public void init(String apiKey, String apiKeySecret, String bucket,
+			Region region) {
+		s3 = new S3BucketFileSystem();
+		s3.init(apiKey, apiKeySecret, bucket, region);
+		List<FileSystemEntry> entries = s3.listFilesRoot();
+		if (entries.isEmpty()) {
+			super.add(new DirectoryEntry(ROOT_FOLDER));
+		} else {
+			for (FileSystemEntry entry : entries) {
+				if (entry.isDirectory()) {
+					super.add(new DirectoryEntry(entry.getPath()));
+				} else {
+					super.add(new FileEntry(entry.getPath()));
+				}
+			}
 		}
 	}
 
@@ -38,7 +61,6 @@ public class CachedFileSystem extends FakeFileSystemWrapper {
 		super.add(entry);
 	}
 
-	//
 	// public FileSystemEntry getEntry(String path) {
 	// FileSystemEntry cached = super.getEntry(path);
 	// if ((cached == null) || (isFile(path) && cached.getSize() == 0)) {

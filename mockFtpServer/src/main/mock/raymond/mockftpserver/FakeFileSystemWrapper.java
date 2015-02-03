@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vorlex.mockftpserver;
+package raymond.mockftpserver;
 
 import java.util.List;
 
@@ -27,6 +27,7 @@ public class FakeFileSystemWrapper implements FileSystem {
 
 	public FakeFileSystemWrapper() {
 		wrapped = new FakeFileSystemWrapped();
+		wrapped.setCreateParentDirectoriesAutomatically(true);
 	}
 
 	@Override

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vorlex.mockftpserver;
+package raymond.mockftpserver;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -29,7 +29,6 @@ import org.mockftpserver.fake.filesystem.FileSystemEntry;
 
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Region;
-import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
@@ -44,16 +43,20 @@ import com.amazonaws.services.s3.model.StorageClass;
 public class S3BucketFileSystem extends FakeFileSystemWrapper {
 
 	private static final String FOLDER_SUFFIX = "/";
-	private static final String ROOT_FOLDER = "/";
+	private static final String ROOT_FOLDER = "//";
 
-	private static String apiKey = "AKIAJQIF4KULRWAP7WBQ";
-	private static String apiKeySecret = "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";
-	private String bucket = "disk-aaa";
 	private AmazonS3 s3;
 
+	private String bucket;
+
 	public S3BucketFileSystem() {
+	}
+
+	public void init(String apiKey, String apiKeySecret, String bucket,
+			Region region) {
+		this.bucket = bucket;
 		s3 = new AmazonS3Client(new BasicAWSCredentials(apiKey, apiKeySecret));
-		s3.setRegion(Region.getRegion(Regions.SA_EAST_1));
+		s3.setRegion(region);
 	}
 
 	@Override
@@ -144,12 +147,14 @@ public class S3BucketFileSystem extends FakeFileSystemWrapper {
 
 	@Override
 	public boolean delete(String path) {
-		throw new RuntimeException();
+		delete(getEntry(path));
+		return true;
 	}
 
 	@Override
 	public void rename(String fromPath, String toPath) {
-		throw new RuntimeException();
+		FileSystemEntry entry = super.getEntry(fromPath);
+		rename(entry, toPath);
 	}
 
 	@Override
