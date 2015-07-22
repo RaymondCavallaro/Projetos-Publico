@@ -157,7 +157,16 @@ public final class S3CachedFtpServer extends FakeFtpServer {
 		// s3.init(apiKey, apiKeySecret, bucket, region);
 		// setFileSystem(s3);
 		localFileSystem = new CachedFileSystem();
-		localFileSystem.init(apiKey, apiKeySecret, bucket, region);
+
+//		S3BucketFileSystem s3 = new S3BucketFileSystem();
+//		s3.init(apiKey, apiKeySecret, bucket, region);
+
+		GCSStorageBucketFileSystem s3 = new GCSStorageBucketFileSystem();
+		s3.init(apiKey, apiKeySecret, bucket);
+
+		setServerControlPort(22);
+
+		localFileSystem.init(s3);
 		setFileSystem(localFileSystem);
 		logger.info("fim inicializacao");
 

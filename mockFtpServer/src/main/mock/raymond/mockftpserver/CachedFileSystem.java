@@ -16,28 +16,29 @@
  */
 package raymond.mockftpserver;
 
+import java.io.IOException;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
 import org.mockftpserver.fake.filesystem.DirectoryEntry;
 import org.mockftpserver.fake.filesystem.FileEntry;
 import org.mockftpserver.fake.filesystem.FileSystemEntry;
 
-import com.amazonaws.regions.Region;
+import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
 
 public class CachedFileSystem extends FakeFileSystemWrapper {
 
 	private static final String ROOT_FOLDER = "/";
 
-	protected S3BucketFileSystem s3;
+	protected BucketFileSystem s3;
 
 	public CachedFileSystem() {
 		super();
 	}
 
-	public void init(String apiKey, String apiKeySecret, String bucket,
-			Region region) {
-		s3 = new S3BucketFileSystem();
-		s3.init(apiKey, apiKeySecret, bucket, region);
+	public void init(BucketFileSystem fileSystem) {
+		s3 = fileSystem;
 		List<FileSystemEntry> entries = s3.listFilesRoot();
 		if (entries.isEmpty()) {
 			super.add(new DirectoryEntry(ROOT_FOLDER));
@@ -76,8 +77,7 @@ public class CachedFileSystem extends FakeFileSystemWrapper {
 	// }
 	// try {
 	// try {
-	// IOUtils.copy(obj.getObjectContent(),
-	// file.createOutputStream(false));
+	// IOUtils.copy(obj.getObjectContent(), file.createOutputStream(false));
 	// } finally {
 	// obj.close();
 	// }
@@ -91,6 +91,33 @@ public class CachedFileSystem extends FakeFileSystemWrapper {
 	// }
 	// return cached;
 	// }
+
+	public FileSystemEntry getEntry(String path) {
+		FileSystemEntry cached = super.getEntry(path);
+		if ((cached != null) && !cached.isDirectory() && (cached.getSize() == 0)) {
+			S3Object obj = s3.getObject(new GetObjectRequest(bucket, path));
+			if (obj != null) {
+				FileEntry file;
+				if (cached == null) {
+					file = new FileEntry(path);
+				} else {
+					file = (FileEntry) cached;
+				}
+				try {
+					try {
+						IOUtils.copy(obj.getObjectContent(), file.createOutputStream(false));
+					} finally {
+						obj.close();
+					}
+					cached = file;
+					super.add(cached);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return cached;
+	}
 
 	@Override
 	public boolean delete(String path) {

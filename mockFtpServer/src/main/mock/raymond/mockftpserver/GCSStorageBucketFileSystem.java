@@ -28,7 +28,6 @@ import org.mockftpserver.fake.filesystem.FileEntry;
 import org.mockftpserver.fake.filesystem.FileSystemEntry;
 
 import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.regions.Region;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
@@ -40,7 +39,7 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.amazonaws.services.s3.model.StorageClass;
 
-public class S3BucketFileSystem extends FakeFileSystemWrapper implements BucketFileSystem {
+public class GCSStorageBucketFileSystem extends FakeFileSystemWrapper implements BucketFileSystem {
 
 	private static final String FOLDER_SUFFIX = "/";
 	private static final String ROOT_FOLDER = "//";
@@ -49,33 +48,13 @@ public class S3BucketFileSystem extends FakeFileSystemWrapper implements BucketF
 
 	private String bucket;
 
-	public S3BucketFileSystem() {
+	public GCSStorageBucketFileSystem() {
 	}
 
-	public void init(String apiKey, String apiKeySecret, String bucket, Region region) {
+	public void init(String apiKey, String apiKeySecret, String bucket) {
 		this.bucket = bucket;
 		s3 = new AmazonS3Client(new BasicAWSCredentials(apiKey, apiKeySecret));
-		s3.setRegion(region);
-	}
-
-	@Override
-	public List<FileSystemEntry> listFilesRoot() {
-		List<FileSystemEntry> retorno = new ArrayList<FileSystemEntry>();
-		// if (isDirectory(path)) {
-		// ObjectListing listing = isRoot(path) ? s3.listObjects(bucket)
-		// : s3.listObjects(bucket, path);
-		ObjectListing listing = s3.listObjects(bucket);
-		for (S3ObjectSummary summary : listing.getObjectSummaries()) {
-			String summaryPath = summary.getKey();
-			FileSystemEntry entry;
-			if (isDirectory(summaryPath)) {
-				entry = new DirectoryEntry(summaryPath.substring(0, summaryPath.length() - 1));
-			} else {
-				entry = new FileEntry(summaryPath);
-			}
-			retorno.add(entry);
-		}
-		return retorno;
+		s3.setEndpoint("storage.googleapis.com");
 	}
 
 	@Override
@@ -104,7 +83,7 @@ public class S3BucketFileSystem extends FakeFileSystemWrapper implements BucketF
 			metaData.setContentLength(entry.getSize());
 			request = new PutObjectRequest(bucket, entry.getPath(), ((FileEntry) entry).createInputStream(), metaData);
 		}
-		request.setStorageClass(StorageClass.ReducedRedundancy);
+//		request.setStorageClass(StorageClass.ReducedRedundancy);
 		s3.putObject(request);
 	}
 
@@ -129,18 +108,35 @@ public class S3BucketFileSystem extends FakeFileSystemWrapper implements BucketF
 		return null;
 	}
 
-	@Override
 	public boolean delete(FileSystemEntry entry) {
 		String sufix = entry.isDirectory() ? FOLDER_SUFFIX : "";
 		s3.deleteObject(new DeleteObjectRequest(bucket, entry.getPath() + sufix));
 		return true;
 	}
 
-	@Override
 	public void rename(FileSystemEntry entry, String toPath) {
 		String sufix = entry.isDirectory() ? FOLDER_SUFFIX : "";
 		s3.copyObject(bucket, entry.getPath() + sufix, bucket, toPath + sufix);
 		delete(entry);
+	}
+
+	public List<FileSystemEntry> listFilesRoot() {
+		List<FileSystemEntry> retorno = new ArrayList<FileSystemEntry>();
+		// if (isDirectory(path)) {
+		// ObjectListing listing = isRoot(path) ? s3.listObjects(bucket)
+		// : s3.listObjects(bucket, path);
+		ObjectListing listing = s3.listObjects(bucket);
+		for (S3ObjectSummary summary : listing.getObjectSummaries()) {
+			String summaryPath = summary.getKey();
+			FileSystemEntry entry;
+			if (isDirectory(summaryPath)) {
+				entry = new DirectoryEntry(summaryPath.substring(0, summaryPath.length() - 1));
+			} else {
+				entry = new FileEntry(summaryPath);
+			}
+			retorno.add(entry);
+		}
+		return retorno;
 	}
 
 	@Override
