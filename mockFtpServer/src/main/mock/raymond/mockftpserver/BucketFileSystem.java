@@ -25,13 +25,11 @@ import com.amazonaws.auth.AWSCredentials;
 
 public interface BucketFileSystem extends FileSystem {
 
-	void init();
+	void init(AWSCredentials credentials);
 
 	List<FileSystemEntry> listFilesRoot();
 
 	boolean delete(FileSystemEntry entry);
 
 	void rename(FileSystemEntry entry, String toPath);
-
-	void setCredentials(AWSCredentials credentials);
 }

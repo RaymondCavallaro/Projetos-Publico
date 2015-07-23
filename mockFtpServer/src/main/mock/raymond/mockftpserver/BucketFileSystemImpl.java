@@ -50,8 +50,6 @@ public class BucketFileSystemImpl extends FakeFileSystemWrapper implements
 	private ClientConfiguration clientConfiguration;
 	private Region region;
 
-	private AWSCredentials credentials;
-
 	private AmazonS3 s3;
 
 	private String bucket;
@@ -60,7 +58,7 @@ public class BucketFileSystemImpl extends FakeFileSystemWrapper implements
 	public BucketFileSystemImpl() {
 	}
 
-	public void init() {
+	public void init(AWSCredentials credentials) {
 		if (clientConfiguration == null) {
 			s3 = new AmazonS3Client(credentials);
 		} else {
@@ -210,10 +208,6 @@ public class BucketFileSystemImpl extends FakeFileSystemWrapper implements
 		throw new RuntimeException();
 	}
 
-	public void setCredentials(AWSCredentials credentials) {
-		this.credentials = credentials;
-	}
-
 	public Region getRegion() {
 		return region;
 	}
@@ -236,5 +230,13 @@ public class BucketFileSystemImpl extends FakeFileSystemWrapper implements
 
 	public void setClientConfiguration(ClientConfiguration clientConfiguration) {
 		this.clientConfiguration = clientConfiguration;
+	}
+
+	public String getEndpoint() {
+		return endpoint;
+	}
+
+	public void setEndpoint(String endpoint) {
+		this.endpoint = endpoint;
 	}
 }

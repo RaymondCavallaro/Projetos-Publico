@@ -142,9 +142,7 @@ public final class BuckedCachedFtpServer extends FakeFtpServer {
 
 		CachedFileSystem cachedFileSystem = (CachedFileSystem) getFileSystem();
 
-		cachedFileSystem.getBucketFileSystem().setCredentials(
-				getCredentials().createAWSCredentials());
-		cachedFileSystem.getBucketFileSystem().init();
+		cachedFileSystem.getBucketFileSystem().init(getCredentials().createAWSCredentials());
 		cachedFileSystem.cache();
 
 		logger.info("fim inicializacao");
