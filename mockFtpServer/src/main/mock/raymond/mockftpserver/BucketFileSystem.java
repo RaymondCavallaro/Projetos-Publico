@@ -21,7 +21,11 @@ import java.util.List;
 import org.mockftpserver.fake.filesystem.FileSystem;
 import org.mockftpserver.fake.filesystem.FileSystemEntry;
 
+import com.amazonaws.auth.AWSCredentials;
+
 public interface BucketFileSystem extends FileSystem {
+
+	void init();
 
 	List<FileSystemEntry> listFilesRoot();
 
@@ -29,4 +33,5 @@ public interface BucketFileSystem extends FileSystem {
 
 	void rename(FileSystemEntry entry, String toPath);
 
+	void setCredentials(AWSCredentials credentials);
 }

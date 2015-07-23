@@ -27,8 +27,10 @@ import org.mockftpserver.fake.filesystem.DirectoryEntry;
 import org.mockftpserver.fake.filesystem.FileEntry;
 import org.mockftpserver.fake.filesystem.FileSystemEntry;
 
-import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.ClientConfiguration;
+import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.regions.Region;
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
@@ -40,10 +42,16 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.amazonaws.services.s3.model.StorageClass;
 
-public class S3BucketFileSystem extends FakeFileSystemWrapper implements BucketFileSystem {
+public class S3BucketFileSystem extends FakeFileSystemWrapper implements
+		BucketFileSystem {
 
 	private static final String FOLDER_SUFFIX = "/";
 	private static final String ROOT_FOLDER = "//";
+
+	private ClientConfiguration clientConfiguration;
+	private Region region = Region.getRegion(Regions.SA_EAST_1);
+
+	private AWSCredentials credentials;
 
 	private AmazonS3 s3;
 
@@ -52,10 +60,12 @@ public class S3BucketFileSystem extends FakeFileSystemWrapper implements BucketF
 	public S3BucketFileSystem() {
 	}
 
-	public void init(String apiKey, String apiKeySecret, String bucket, Region region) {
-		this.bucket = bucket;
-		s3 = new AmazonS3Client(new BasicAWSCredentials(apiKey, apiKeySecret));
-		s3.setRegion(region);
+	public void init() {
+		if (clientConfiguration == null) {
+			s3 = new AmazonS3Client(credentials);
+		} else {
+			s3 = new AmazonS3Client(credentials, clientConfiguration);
+		}
 	}
 
 	@Override
@@ -69,7 +79,8 @@ public class S3BucketFileSystem extends FakeFileSystemWrapper implements BucketF
 			String summaryPath = summary.getKey();
 			FileSystemEntry entry;
 			if (isDirectory(summaryPath)) {
-				entry = new DirectoryEntry(summaryPath.substring(0, summaryPath.length() - 1));
+				entry = new DirectoryEntry(summaryPath.substring(0,
+						summaryPath.length() - 1));
 			} else {
 				entry = new FileEntry(summaryPath);
 			}
@@ -99,10 +110,12 @@ public class S3BucketFileSystem extends FakeFileSystemWrapper implements BucketF
 		if (isDirectory(entry)) {
 			metaData.setContentLength(0);
 			InputStream is = new ByteArrayInputStream(new byte[0]);
-			request = new PutObjectRequest(bucket, entry.getPath() + FOLDER_SUFFIX, is, metaData);
+			request = new PutObjectRequest(bucket, entry.getPath()
+					+ FOLDER_SUFFIX, is, metaData);
 		} else {
 			metaData.setContentLength(entry.getSize());
-			request = new PutObjectRequest(bucket, entry.getPath(), ((FileEntry) entry).createInputStream(), metaData);
+			request = new PutObjectRequest(bucket, entry.getPath(),
+					((FileEntry) entry).createInputStream(), metaData);
 		}
 		request.setStorageClass(StorageClass.ReducedRedundancy);
 		s3.putObject(request);
@@ -116,7 +129,8 @@ public class S3BucketFileSystem extends FakeFileSystemWrapper implements BucketF
 				FileEntry file = new FileEntry(path);
 				try {
 					try {
-						IOUtils.copy(obj.getObjectContent(), file.createOutputStream(false));
+						IOUtils.copy(obj.getObjectContent(),
+								file.createOutputStream(false));
 					} finally {
 						obj.close();
 					}
@@ -188,5 +202,33 @@ public class S3BucketFileSystem extends FakeFileSystemWrapper implements BucketF
 	@Override
 	public String getParent(String path) {
 		throw new RuntimeException();
+	}
+
+	public void setCredentials(AWSCredentials credentials) {
+		this.credentials = credentials;
+	}
+
+	public Region getRegion() {
+		return region;
+	}
+
+	public void setRegion(Region region) {
+		this.region = region;
+	}
+
+	public String getBucket() {
+		return bucket;
+	}
+
+	public void setBucket(String bucket) {
+		this.bucket = bucket;
+	}
+
+	public ClientConfiguration getClientConfiguration() {
+		return clientConfiguration;
+	}
+
+	public void setClientConfiguration(ClientConfiguration clientConfiguration) {
+		this.clientConfiguration = clientConfiguration;
 	}
 }

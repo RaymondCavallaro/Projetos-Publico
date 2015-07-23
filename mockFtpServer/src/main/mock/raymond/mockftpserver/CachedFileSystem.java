@@ -16,30 +16,24 @@
  */
 package raymond.mockftpserver;
 
-import java.io.IOException;
 import java.util.List;
 
-import org.apache.commons.io.IOUtils;
 import org.mockftpserver.fake.filesystem.DirectoryEntry;
 import org.mockftpserver.fake.filesystem.FileEntry;
 import org.mockftpserver.fake.filesystem.FileSystemEntry;
-
-import com.amazonaws.services.s3.model.GetObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
 
 public class CachedFileSystem extends FakeFileSystemWrapper {
 
 	private static final String ROOT_FOLDER = "/";
 
-	protected BucketFileSystem s3;
+	protected BucketFileSystem bucketFileSystem;
 
 	public CachedFileSystem() {
 		super();
 	}
 
-	public void init(BucketFileSystem fileSystem) {
-		s3 = fileSystem;
-		List<FileSystemEntry> entries = s3.listFilesRoot();
+	public void cache() {
+		List<FileSystemEntry> entries = bucketFileSystem.listFilesRoot();
 		if (entries.isEmpty()) {
 			super.add(new DirectoryEntry(ROOT_FOLDER));
 		} else {
@@ -56,7 +50,7 @@ public class CachedFileSystem extends FakeFileSystemWrapper {
 	@Override
 	public void add(FileSystemEntry entry) {
 		if (isDirectory(entry)) {
-			s3.add(entry);
+			bucketFileSystem.add(entry);
 		}
 		// se incluir no s3 inclui no cache
 		super.add(entry);
@@ -67,7 +61,7 @@ public class CachedFileSystem extends FakeFileSystemWrapper {
 	// if ((cached == null) || (isFile(path) && cached.getSize() == 0)) {
 	// if (isFile(path)) {
 	// // busca no s3
-	// S3Object obj = s3.getObject(new GetObjectRequest(bucket, path));
+	// S3Object obj = bucketFileSystem.getObject(new GetObjectRequest(bucket, path));
 	// if (obj != null) {
 	// FileEntry file;
 	// if (cached == null) {
@@ -92,36 +86,37 @@ public class CachedFileSystem extends FakeFileSystemWrapper {
 	// return cached;
 	// }
 
-	public FileSystemEntry getEntry(String path) {
-		FileSystemEntry cached = super.getEntry(path);
-		if ((cached != null) && !cached.isDirectory() && (cached.getSize() == 0)) {
-			S3Object obj = s3.getObject(new GetObjectRequest(bucket, path));
-			if (obj != null) {
-				FileEntry file;
-				if (cached == null) {
-					file = new FileEntry(path);
-				} else {
-					file = (FileEntry) cached;
-				}
-				try {
-					try {
-						IOUtils.copy(obj.getObjectContent(), file.createOutputStream(false));
-					} finally {
-						obj.close();
-					}
-					cached = file;
-					super.add(cached);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		return cached;
-	}
+	// public FileSystemEntry getEntry(String path) {
+	// FileSystemEntry cached = super.getEntry(path);
+	// if ((cached != null) && !cached.isDirectory() && (cached.getSize() == 0))
+	// {
+	// S3Object obj = bucketFileSystem.getObject(new GetObjectRequest(bucket, path));
+	// if (obj != null) {
+	// FileEntry file;
+	// if (cached == null) {
+	// file = new FileEntry(path);
+	// } else {
+	// file = (FileEntry) cached;
+	// }
+	// try {
+	// try {
+	// IOUtils.copy(obj.getObjectContent(), file.createOutputStream(false));
+	// } finally {
+	// obj.close();
+	// }
+	// cached = file;
+	// super.add(cached);
+	// } catch (IOException e) {
+	// e.printStackTrace();
+	// }
+	// }
+	// }
+	// return cached;
+	// }
 
 	@Override
 	public boolean delete(String path) {
-		s3.delete(getEntry(path));
+		bucketFileSystem.delete(getEntry(path));
 		// se deletar no s3 deleta no cache
 		return super.delete(path);
 	}
@@ -129,8 +124,16 @@ public class CachedFileSystem extends FakeFileSystemWrapper {
 	@Override
 	public void rename(String fromPath, String toPath) {
 		FileSystemEntry entry = super.getEntry(fromPath);
-		s3.rename(entry, toPath);
+		bucketFileSystem.rename(entry, toPath);
 		// se renomear no s3 renomeia no cache
 		super.rename(fromPath, toPath);
+	}
+
+	public BucketFileSystem getBucketFileSystem() {
+		return bucketFileSystem;
+	}
+
+	public void setBucketFileSystem(BucketFileSystem bucketFileSystem) {
+		this.bucketFileSystem = bucketFileSystem;
 	}
 }
