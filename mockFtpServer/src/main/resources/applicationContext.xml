@@ -63,8 +63,8 @@ http://www.springframework.org/schema/util/spring-util.xsd
 		<property name="credentials">
 			<bean parent="bucketCredentialsParent">
 				<property name="credencialsFilePath" value="credencialsAWS" />
-				<property name="accessKey" value="accessKeyAWS" />
-				<property name="secretKey" value="secretKeyAWS" />
+				<!-- <property name="accessKey" value="accessKeyAWS" /> -->
+				<!-- <property name="secretKey" value="secretKeyAWS" /> -->
 			</bean>
 		</property>
 	</bean>
@@ -75,8 +75,8 @@ http://www.springframework.org/schema/util/spring-util.xsd
 		<property name="credentials">
 			<bean parent="bucketCredentialsParent">
 				<property name="credencialsFilePath" value="credencialsGCS" />
-				<property name="accessKey" value="accessKeyGCS" />
-				<property name="secretKey" value="secretKeyGCS" />
+				<!-- <property name="accessKey" value="accessKeyGCS" /> -->
+				<!-- <property name="secretKey" value="secretKeyGCS" /> -->
 			</bean>
 		</property>
 	</bean>
