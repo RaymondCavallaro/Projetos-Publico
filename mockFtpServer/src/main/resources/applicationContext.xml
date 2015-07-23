@@ -42,7 +42,7 @@ http://www.springframework.org/schema/util/spring-util.xsd
 						</constructor-arg>
 					</bean>
 				</property>
-				<property name="bucket" value="disk-aaa" />
+				<property name="bucket" value="bucket" />
 			</bean>
 		</property>
 	</bean>
@@ -52,7 +52,7 @@ http://www.springframework.org/schema/util/spring-util.xsd
 			<bean id="gcsStorageCachedFileSystem" class="raymond.mockftpserver.GCSStorageBucketFileSystem">
 				<!-- <property name="clientConfiguration" ref="clientConfiguration" /> -->
 				<property name="endpoint" value="storage.googleapis.com" />
-				<property name="bucket" value="disk-aaa" />
+				<property name="bucket" value="bucket" />
 			</bean>
 		</property>
 	</bean>
