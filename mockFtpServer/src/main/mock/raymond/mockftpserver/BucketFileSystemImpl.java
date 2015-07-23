@@ -30,7 +30,6 @@ import org.mockftpserver.fake.filesystem.FileSystemEntry;
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.regions.Region;
-import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
@@ -42,22 +41,23 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.amazonaws.services.s3.model.StorageClass;
 
-public class S3BucketFileSystem extends FakeFileSystemWrapper implements
+public class BucketFileSystemImpl extends FakeFileSystemWrapper implements
 		BucketFileSystem {
 
 	private static final String FOLDER_SUFFIX = "/";
 	private static final String ROOT_FOLDER = "//";
 
 	private ClientConfiguration clientConfiguration;
-	private Region region = Region.getRegion(Regions.SA_EAST_1);
+	private Region region;
 
 	private AWSCredentials credentials;
 
 	private AmazonS3 s3;
 
 	private String bucket;
+	private String endpoint;
 
-	public S3BucketFileSystem() {
+	public BucketFileSystemImpl() {
 	}
 
 	public void init() {
@@ -65,6 +65,12 @@ public class S3BucketFileSystem extends FakeFileSystemWrapper implements
 			s3 = new AmazonS3Client(credentials);
 		} else {
 			s3 = new AmazonS3Client(credentials, clientConfiguration);
+		}
+		if (region != null) {
+			s3.setRegion(region);
+		}
+		if (endpoint != null) {
+			s3.setEndpoint(endpoint);
 		}
 	}
 

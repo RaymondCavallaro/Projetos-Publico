@@ -56,63 +56,15 @@ public class CachedFileSystem extends FakeFileSystemWrapper {
 		super.add(entry);
 	}
 
-	// public FileSystemEntry getEntry(String path) {
-	// FileSystemEntry cached = super.getEntry(path);
-	// if ((cached == null) || (isFile(path) && cached.getSize() == 0)) {
-	// if (isFile(path)) {
-	// // busca no s3
-	// S3Object obj = bucketFileSystem.getObject(new GetObjectRequest(bucket, path));
-	// if (obj != null) {
-	// FileEntry file;
-	// if (cached == null) {
-	// file = new FileEntry(path);
-	// } else {
-	// file = (FileEntry) cached;
-	// }
-	// try {
-	// try {
-	// IOUtils.copy(obj.getObjectContent(), file.createOutputStream(false));
-	// } finally {
-	// obj.close();
-	// }
-	// cached = file;
-	// super.add(cached);
-	// } catch (IOException e) {
-	// e.printStackTrace();
-	// }
-	// }
-	// }
-	// }
-	// return cached;
-	// }
-
-	// public FileSystemEntry getEntry(String path) {
-	// FileSystemEntry cached = super.getEntry(path);
-	// if ((cached != null) && !cached.isDirectory() && (cached.getSize() == 0))
-	// {
-	// S3Object obj = bucketFileSystem.getObject(new GetObjectRequest(bucket, path));
-	// if (obj != null) {
-	// FileEntry file;
-	// if (cached == null) {
-	// file = new FileEntry(path);
-	// } else {
-	// file = (FileEntry) cached;
-	// }
-	// try {
-	// try {
-	// IOUtils.copy(obj.getObjectContent(), file.createOutputStream(false));
-	// } finally {
-	// obj.close();
-	// }
-	// cached = file;
-	// super.add(cached);
-	// } catch (IOException e) {
-	// e.printStackTrace();
-	// }
-	// }
-	// }
-	// return cached;
-	// }
+	public FileSystemEntry getRealEntry(String path) {
+		FileSystemEntry cached = super.getEntry(path);
+		if ((cached == null) || (isFile(path) && cached.getSize() == 0)) {
+			super.delete(path);
+			cached = bucketFileSystem.getEntry(path);
+			super.add(cached);
+		}
+		return cached;
+	}
 
 	@Override
 	public boolean delete(String path) {

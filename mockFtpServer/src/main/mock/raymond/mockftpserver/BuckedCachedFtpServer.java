@@ -25,6 +25,7 @@ import org.mockftpserver.core.session.Session;
 import org.mockftpserver.core.session.SessionKeys;
 import org.mockftpserver.fake.FakeFtpServer;
 import org.mockftpserver.fake.UserAccount;
+import org.mockftpserver.fake.command.RetrCommandHandler;
 import org.mockftpserver.fake.command.StorCommandHandler;
 import org.mockftpserver.fake.filesystem.FileEntry;
 import org.mockftpserver.fake.filesystem.FileSystemEntry;
@@ -125,6 +126,17 @@ public final class BuckedCachedFtpServer extends FakeFtpServer {
 			}
 		};
 		setCommandHandler(CommandNames.STOR, stor);
+
+		RetrCommandHandler retr = new RetrCommandHandler() {
+			@Override
+			protected void handle(Command command, Session session) {
+				verifyLoggedIn(session);
+				String path = getRealPath(session, command.getRequiredParameter(0));
+				((CachedFileSystem) getFileSystem()).getRealEntry(path);
+				super.handle(command, session);
+			}
+		};
+		setCommandHandler(CommandNames.RETR, retr);
 
 		getCredentials().init();
 
