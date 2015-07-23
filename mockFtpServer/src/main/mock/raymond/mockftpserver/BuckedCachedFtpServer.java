@@ -56,6 +56,8 @@ public final class BuckedCachedFtpServer extends FakeFtpServer {
 	public void go() throws EncryptionException, IOException,
 			UnsupportedEncodingException {
 
+		logger.info("inicializando");
+
 		login = new UserAccount() {
 			@Override
 			public boolean canExecute(FileSystemEntry entry) {
@@ -124,14 +126,12 @@ public final class BuckedCachedFtpServer extends FakeFtpServer {
 		};
 		setCommandHandler(CommandNames.STOR, stor);
 
-		credentials.readKeyFile();
-
-		logger.info("inicializando");
+		getCredentials().init();
 
 		CachedFileSystem cachedFileSystem = (CachedFileSystem) getFileSystem();
 
 		cachedFileSystem.getBucketFileSystem().setCredentials(
-				credentials.createAWSCredentials());
+				getCredentials().createAWSCredentials());
 		cachedFileSystem.getBucketFileSystem().init();
 		cachedFileSystem.cache();
 
@@ -150,9 +150,6 @@ public final class BuckedCachedFtpServer extends FakeFtpServer {
 				.getBean("gcsStorageFtpServer");
 
 		ctx.close();
-
-		s3FtpServer.getCredentials().init();
-		gcsStorageFtpServer.getCredentials().init();
 
 		s3FtpServer.go();
 		gcsStorageFtpServer.go();

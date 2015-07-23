@@ -59,11 +59,11 @@ public final class BucketFileCredentials {
 		return new BasicAWSCredentials(apiKey, apiKeySecret);
 	}
 
-	public void init() throws Exception {
+	public void init() throws IOException, EncryptionException {
 		_accessFile = new File(credencialsFilePath);
 
-		if (!_accessFile.exists()) {
-			throw new Exception("sem credenciais");
+		if (_accessFile.exists()) {
+			readKeyFile();
 		} else {
 			writeKeyFile(accessKey, secretKey.toCharArray());
 		}
