@@ -39,10 +39,12 @@ public final class BucketFileCredentials {
 
 	private File _accessFile;
 
-	private String identityPath;
+	private String credencialsFilePath;
 	private String charset;
 	private String keyBase;
 	private String chave;
+	private String accessKey;
+	private String secretKey;
 
 	private String apiKey;
 	private String apiKeySecret;
@@ -58,10 +60,12 @@ public final class BucketFileCredentials {
 	}
 
 	public void init() throws Exception {
-		_accessFile = new File(identityPath);
+		_accessFile = new File(credencialsFilePath);
 
 		if (!_accessFile.exists()) {
 			throw new Exception("sem credenciais");
+		} else {
+			writeKeyFile(accessKey, secretKey.toCharArray());
 		}
 	}
 
@@ -163,14 +167,6 @@ public final class BucketFileCredentials {
 		apiKeySecret = new String(secretKey);
 	}
 
-	public String getIdentityPath() {
-		return identityPath;
-	}
-
-	public void setIdentityPath(String identityPath) {
-		this.identityPath = identityPath;
-	}
-
 	public String getCharset() {
 		return charset;
 	}
@@ -193,6 +189,30 @@ public final class BucketFileCredentials {
 
 	public void setChave(String chave) {
 		this.chave = chave;
+	}
+
+	public String getCredencialsFilePath() {
+		return credencialsFilePath;
+	}
+
+	public void setCredencialsFilePath(String credencialsFilePath) {
+		this.credencialsFilePath = credencialsFilePath;
+	}
+
+	public String getAccessKey() {
+		return accessKey;
+	}
+
+	public void setAccessKey(String accessKey) {
+		this.accessKey = accessKey;
+	}
+
+	public String getSecretKey() {
+		return secretKey;
+	}
+
+	public void setSecretKey(String secretKey) {
+		this.secretKey = secretKey;
 	}
 
 }

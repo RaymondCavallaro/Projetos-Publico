@@ -151,19 +151,8 @@ public final class BuckedCachedFtpServer extends FakeFtpServer {
 
 		ctx.close();
 
-		try {
-			s3FtpServer.getCredentials().init();
-			gcsStorageFtpServer.getCredentials().init();
-		} catch (Exception e) {
-			if (args.length != 4) {
-				throw new RuntimeException(e);
-			} else {
-				s3FtpServer.getCredentials().writeKeyFile(args[0],
-						args[1].toCharArray());
-				gcsStorageFtpServer.getCredentials().writeKeyFile(args[2],
-						args[3].toCharArray());
-			}
-		}
+		s3FtpServer.getCredentials().init();
+		gcsStorageFtpServer.getCredentials().init();
 
 		s3FtpServer.go();
 		gcsStorageFtpServer.go();
